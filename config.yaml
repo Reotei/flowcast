@@ -1,0 +1,98 @@
+# FlowCast configuration — single source of truth for paths, rules and hyperparameters.
+# Every number here is referenced by src/ code; change it here, not in the code.
+
+seed: 42
+timezone: Asia/Kolkata          # PRD §9.1 asks for a tz-aware timestamp; Delhi has no DST
+
+paths:
+  raw_dir: data/raw              # overridden by --data-dir on the command line
+  interim_dir: data/interim
+  processed_dir: data/processed
+  models_dir: models
+  reports_dir: reports
+  figures_dir: reports/figures
+
+files:
+  traffic: traffic_sensor_log.csv
+  weather: weather_observations.csv
+  calendar: calendar_events.csv
+
+grid:
+  window_minutes: 30
+  windows_per_day: 48
+  start_date: "2025-01-01"
+  end_date: "2025-05-31"
+
+# Physical-validity rules (Data Dictionary §5). Values breaking a rule are sensor faults -> NaN.
+outlier_rules:
+  traffic_volume_min: 0          # volume < 0 is impossible
+  avg_speed_max: 200             # km/h
+  occupancy_max: 100             # percent
+  zscore_flag_threshold: 4.0     # statistical flag only (logged, value kept)
+
+imputation:
+  short_gap_max_windows: 2       # gaps of <= 2 windows (1 hour) -> time interpolation
+                                 # longer gaps -> segment x time-window median (train window only)
+
+weather_label_map:               # applied after strip + lowercase
+  clear: Clear
+  cloudy: Cloudy
+  overcast: Cloudy               # NOT in the documented vocabulary; mapped and logged
+  rain: Rain
+  rainy: Rain
+  fog: Fog
+  foggy: Fog
+
+congestion_bands:                # V/C = volume / (capacity / 2)
+  - {label: Free-flow, upper: 0.50}
+  - {label: Moderate,  upper: 0.80}
+  - {label: Heavy,     upper: 1.00}
+  - {label: Severe,    upper: .inf}
+congestion_order: [Free-flow, Moderate, Heavy, Severe]
+
+features:
+  peak_windows:                  # half-open [start, end) in HH:MM
+    - ["07:30", "10:30"]
+    - ["17:00", "20:30"]
+  low_visibility_m: 1000
+  rain_mm: 0.1
+  volume_lags: [1, 2, 3, 48, 336]  # windows before the TARGET window (336 = same window last week)
+  rolling_windows: [4, 8]
+  accident_history_windows: 336    # past-week accident count per segment
+
+# Time split by calendar date (inclusive). Never shuffled.
+split:
+  train_end: "2025-04-10"        # 1 Jan - 10 Apr  (100 days)
+  val_end: "2025-05-05"          # 11 Apr - 5 May  (25 days)
+                                 # 6 May - 31 May  (26 days) = untouched test
+
+horizons: [1, 2, 3, 4]           # windows ahead (30-120 min); h=1 is the headline
+
+cv:
+  n_splits: 3
+
+ml:
+  fast_mode_row_cap: 60000       # used only with --fast (smoke tests)
+  svm_train_rows: 40000          # LinearSVC subsample cap (2-core machine)
+  gd_learning_rate: 0.1
+  gd_epochs: 600
+
+dl:
+  cells: [gru, lstm]             # both are trained; the better one on validation is the headline DL model
+  seq_len: 24                    # 12 hours of history per sample
+  hidden_size: 64
+  num_layers: 2
+  dropout: 0.2
+  learning_rate: 0.002
+  weight_decay: 0.00001
+  batch_size: 512
+  max_epochs: 30
+  early_stopping_patience: 4
+  lr_plateau_patience: 2
+  lr_plateau_factor: 0.5
+
+success_targets:
+  volume_mape_max: 12.0
+  congestion_macro_f1_min: 0.80
+  accident_roc_auc_min: 0.75
+  leakage_alarm_macro_f1: 0.97

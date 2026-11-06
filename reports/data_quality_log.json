@@ -1,0 +1,331 @@
+[
+  {
+    "stage": "M1 ingest",
+    "rule": "calendar rows loaded",
+    "count": 151,
+    "action": "kept",
+    "note": "0 bad dates, 0 duplicate dates quarantined"
+  },
+  {
+    "stage": "M1 ingest",
+    "rule": "weather rows loaded",
+    "count": 10872,
+    "action": "kept",
+    "note": "0 quarantined; 0 negative rainfall, 0 impossible visibility set to NaN"
+  },
+  {
+    "stage": "M1 ingest",
+    "rule": "traffic rows read",
+    "count": 178468,
+    "action": "loaded",
+    "note": ""
+  },
+  {
+    "stage": "M2 dedup",
+    "rule": "exact duplicate rows",
+    "count": 1767,
+    "action": "removed (quarantined)",
+    "note": ""
+  },
+  {
+    "stage": "M2 dedup",
+    "rule": "key duplicates (road_id+date+time)",
+    "count": 1767,
+    "action": "removed (quarantined)",
+    "note": "kept the most complete record per key"
+  },
+  {
+    "stage": "M2 outliers",
+    "rule": "traffic_volume < 0",
+    "count": 239,
+    "action": "set to NaN, then imputed",
+    "note": ""
+  },
+  {
+    "stage": "M2 outliers",
+    "rule": "avg_speed > 200 km/h",
+    "count": 236,
+    "action": "set to NaN, then imputed",
+    "note": ""
+  },
+  {
+    "stage": "M2 outliers",
+    "rule": "occupancy > 100 %",
+    "count": 229,
+    "action": "set to NaN, then imputed",
+    "note": ""
+  },
+  {
+    "stage": "M2 outliers",
+    "rule": "traffic_volume |z| > 4.0 (segment x window)",
+    "count": 9,
+    "action": "flagged only",
+    "note": ""
+  },
+  {
+    "stage": "M2 outliers",
+    "rule": "avg_speed |z| > 4.0 (segment x window)",
+    "count": 52,
+    "action": "flagged only",
+    "note": ""
+  },
+  {
+    "stage": "M2 outliers",
+    "rule": "occupancy |z| > 4.0 (segment x window)",
+    "count": 30,
+    "action": "flagged only",
+    "note": ""
+  },
+  {
+    "stage": "M2 JSON",
+    "rule": "vehicle_type_dist unparseable",
+    "count": 0,
+    "action": "shares set to NaN, then imputed",
+    "note": ""
+  },
+  {
+    "stage": "M2 grid",
+    "rule": "absent windows added by reindex",
+    "count": 4499,
+    "action": "row added, values imputed",
+    "note": "25 segments x 7248 windows = 181,200 rows"
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "vehicle_count == traffic_volume",
+    "count": 172114,
+    "action": "checked",
+    "note": "equal in 100.00% of rows -> vehicle_count is the target, never a same-window feature"
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "traffic_volume repaired from vehicle_count",
+    "count": 4587,
+    "action": "filled",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "traffic_volume short gaps (<= 2 windows)",
+    "count": 4498,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "traffic_volume long gaps / edges",
+    "count": 1,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "avg_speed short gaps (<= 2 windows)",
+    "count": 9024,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "avg_speed long gaps / edges",
+    "count": 54,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "occupancy short gaps (<= 2 windows)",
+    "count": 9018,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "occupancy long gaps / edges",
+    "count": 54,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "travel_time short gaps (<= 2 windows)",
+    "count": 4498,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "travel_time long gaps / edges",
+    "count": 1,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "signal_timing short gaps (<= 2 windows)",
+    "count": 4498,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "signal_timing long gaps / edges",
+    "count": 1,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "share_2w short gaps (<= 2 windows)",
+    "count": 4498,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "share_2w long gaps / edges",
+    "count": 1,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "share_car short gaps (<= 2 windows)",
+    "count": 4498,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "share_car long gaps / edges",
+    "count": 1,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "share_lcv short gaps (<= 2 windows)",
+    "count": 4498,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "share_lcv long gaps / edges",
+    "count": 1,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "share_hcv short gaps (<= 2 windows)",
+    "count": 4498,
+    "action": "time interpolation within segment",
+    "note": ""
+  },
+  {
+    "stage": "M2 impute",
+    "rule": "share_hcv long gaps / edges",
+    "count": 1,
+    "action": "segment x time-window median (train dates only)",
+    "note": ""
+  },
+  {
+    "stage": "M2 congestion",
+    "rule": "V/C rule reproduces existing labels",
+    "count": 146171,
+    "action": "checked",
+    "note": "agreement 100.00% -> congestion is a function of same-window volume (leakage risk)"
+  },
+  {
+    "stage": "M2 congestion",
+    "rule": "blank congestion_level (observed volume)",
+    "count": 25943,
+    "action": "derived from V/C",
+    "note": ""
+  },
+  {
+    "stage": "M2 congestion",
+    "rule": "blank congestion_level (imputed volume)",
+    "count": 5180,
+    "action": "derived from V/C, excluded from evaluation",
+    "note": ""
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "labels normalised (13 raw spellings)",
+    "count": 10872,
+    "action": "strip + lowercase + map to Clear/Cloudy/Rain/Fog",
+    "note": ""
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "'Overcast' (not in documented vocabulary)",
+    "count": 358,
+    "action": "mapped to Cloudy",
+    "note": ""
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "unrecognised weather labels",
+    "count": 0,
+    "action": "forward-filled from previous hour",
+    "note": ""
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "duplicate station-hours",
+    "count": 0,
+    "action": "removed",
+    "note": ""
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "missing station-hours",
+    "count": 0,
+    "action": "row added, forward-filled",
+    "note": "3 stations x 3624 hours = 10,872"
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "weather_condition missing",
+    "count": 0,
+    "action": "forward-filled within station",
+    "note": ""
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "temperature missing",
+    "count": 167,
+    "action": "forward-filled within station",
+    "note": ""
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "rainfall missing",
+    "count": 0,
+    "action": "forward-filled within station",
+    "note": ""
+  },
+  {
+    "stage": "M2 weather",
+    "rule": "visibility missing",
+    "count": 111,
+    "action": "forward-filled within station",
+    "note": ""
+  },
+  {
+    "stage": "M2 merge",
+    "rule": "rows after weather + calendar join",
+    "count": 181200,
+    "action": "kept",
+    "note": "0 rows without weather"
+  },
+  {
+    "stage": "M2 output",
+    "rule": "quarantine file rows",
+    "count": 2471,
+    "action": "written to data/interim/quarantine.csv",
+    "note": ""
+  }
+]

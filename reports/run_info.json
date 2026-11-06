@@ -1,0 +1,8 @@
+{
+  "finished_utc": "2026-11-06T15:16:21+00:00",
+  "data_dir": "/Users/zoveioreotei/Downloads/flowcast-final/data/raw",
+  "data_label": "raw files in raw/",
+  "fast_mode": false,
+  "deep_learning": true,
+  "runtime_minutes": 18.5
+}

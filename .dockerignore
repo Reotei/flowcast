@@ -1,0 +1,10 @@
+.git
+**/__pycache__
+**/*.pyc
+.pytest_cache
+data/processed
+data/interim
+models
+reports
+tests
+*.zip
